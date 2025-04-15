@@ -7,4 +7,5 @@
 
 ### Software utilizado
 - Arduino IDE
+- MQTT
   
