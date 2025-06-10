@@ -7,6 +7,7 @@
 ### Software utilizado
 - Arduino IDE
 - Protocolo MQTT
+- SoundVolumeView
   
 ### Customizações realizadas
 - Desenvolvimento de código embarcado no ESP8266 para leitura dos dados do sensor de distância.
