@@ -3,17 +3,19 @@ import subprocess
 import os
 
 # --- MQTT Configuration ---
-MQTT_BROKER = "your_mqtt_broker_address"  # e.g., "localhost", "broker.hivemq.com"
+MQTT_BROKER = "test.mosquitto.org"  # broker address
 MQTT_PORT = 1883
-MQTT_TOPIC = "audio/change_device"
-MQTT_USERNAME = "your_username"  # Optional
-MQTT_PASSWORD = "your_password"  # Optional
+MQTT_TOPIC = "teste/MovingMusic/zonas" # Topic to subscribe to for commands
+#MQTT_USERNAME = "your_username"  # Optional
+#MQTT_PASSWORD = "your_password"  # Optional
 
 # --- Audio Device Configuration ---
 # IMPORTANT: Replace these with the exact names of your audio devices
 # You can find these in Windows Sound settings (right-click speaker icon in taskbar -> Sound settings)
-DEVICE_SPEAKERS = "Speakers (Realtek High Definition Audio)"
-DEVICE_HEADPHONES = "Headphones (Oculus Virtual Audio Device)"
+NOME_COMMODO_1 = "Sala"
+DEVICE_COMMODO_1 = "Altofalantes"
+NOME_COMMODO_2 = "Quarto"
+DEVICE_COMMODO_2 = "Alto-falantes"
 # Path to SoundVolumeView.exe (download from NirSoft and place it somewhere accessible)
 SOUNDVOLUMEVIEW_PATH = "C:\\Program Files\\SoundVolumeView\\SoundVolumeView.exe"
 
@@ -25,10 +27,10 @@ def on_message(client, userdata, msg):
     print(f"Message received: {msg.topic} - {msg.payload.decode()}")
     command = msg.payload.decode().strip().lower()
 
-    if command == "speakers":
-        set_default_audio_device(DEVICE_SPEAKERS)
-    elif command == "headphones":
-        set_default_audio_device(DEVICE_HEADPHONES)
+    if command == NOME_COMMODO_1.lower():
+        set_default_audio_device(DEVICE_COMMODO_1)
+    elif command == NOME_COMMODO_2.lower():
+        set_default_audio_device(DEVICE_COMMODO_2)
     else:
         print(f"Unknown command: {command}")
 
@@ -60,15 +62,17 @@ def set_default_audio_device(device_name):
         print(f"An unexpected error occurred: {e}")
 
 if __name__ == "__main__":
+    # Initialize MQTT client
     client = mqtt.Client()
     client.on_connect = on_connect
     client.on_message = on_message
-
+    '''
     if MQTT_USERNAME and MQTT_PASSWORD:
         client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
-
+    '''
     try:
         client.connect(MQTT_BROKER, MQTT_PORT, 60)
         client.loop_forever()
     except Exception as e:
         print(f"Failed to connect to MQTT broker: {e}")
+    
