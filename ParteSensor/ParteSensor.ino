@@ -2,8 +2,8 @@
 #include <PubSubClient.h>
 
 // WiFi settings
-const char *ssid = "";             // Replace with your WiFi name
-const char *password = "";   // Replace with your WiFi password
+const char* ssid = "iPhone Muniz";
+const char* password = "muniz2001"; 
 
 // MQTT Broker settings
 const char *mqtt_broker = "test.mosquitto.org";  // EMQX broker endpoint
@@ -13,7 +13,10 @@ const char *mqtt_password = "public";  // MQTT password for authentication
 const int mqtt_port = 1883;  // MQTT port (TCP)
 
 // Nome do Comodo
-const char *COMODO = "Sala";
+const char *COMODO = "Quarto";
+
+// Nome dos pinos
+#define TRIG_PIN D2
 
 WiFiClient espClient;
 PubSubClient mqtt_client(espClient);
@@ -27,6 +30,7 @@ void mqttCallback(char *topic, byte *payload, unsigned int length);
 void setup() {
     pinMode(0, INPUT); // define o botao "flash" do esp8266 como entrada
     pinMode(D4, OUTPUT); // Define o LED integrado do esp8266 como saida
+    pinMode(TRIG_PIN, INPUT);
     
     Serial.begin(115200);
     connectToWiFi();
@@ -80,12 +84,13 @@ void loop() {
     }
     mqtt_client.loop();
 
-    int movimento = digitalRead(0);
-    if (movimento == 0) {
+    int force = digitalRead(0);
+    int movimento = digitalRead(TRIG_PIN);
+    if (movimento == 1 || force == 0) {
         Serial.println("enviando deteccao");
         mqtt_client.publish(mqtt_topic, COMODO);
-        digitalWrite(D4, LOW);
-        delay(100);
+        digitalWrite(D4, force);
+        delay(150);
     }
     digitalWrite(D4, HIGH);
 }
